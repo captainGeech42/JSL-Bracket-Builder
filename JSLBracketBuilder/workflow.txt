@@ -32,3 +32,5 @@ workflow:
 	go through every ladder bronze3-diamond3 looking for players with btags registered with us
 	write date, btag, and mmr to file in csv
 	ingest that into sheets
+
+groups: you pick top 8 people and randomize them into groups, then next 8 people and so on

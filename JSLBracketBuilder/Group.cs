@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace JSLBracketBuilder
 {
     public class Group
     {
         public List<Player> Members { get; set; }
-        public int Id { get; private set; }
+        public char Id { get; private set; }
 
-        public Group(int id)
+        public Group(char id)
         {
             Id = id;
             Members = new List<Player>();

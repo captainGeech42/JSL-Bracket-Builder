@@ -10,17 +10,19 @@ namespace JSLBracketBuilder
 {
     public partial class MainWindow : Form
     {
-        private List<string> Battletags;
-        private List<Player> ExistingData;
+        private int NumGroups { get; } = 8;
+
+        private List<string> Battletags = null;
+        private List<Player> ExistingData = null;
 
         private BackgroundWorker Worker;
         private Operation Operation;
 
         private new Region Region;
         private int SeasonID;
-        private List<Ladder> Ladders;
-        private List<Player> Players;
-        private List<Group> Groups;
+        private List<Ladder> Ladders = null;
+        private List<Player> Players = null;
+        private List<Group> Groups = null;
 
         public MainWindow()
         {
@@ -46,7 +48,7 @@ namespace JSLBracketBuilder
 
         private void LoadExisting_Click(object sender, EventArgs e)
         {
-            using (var stream = GetFile(@"json files (*.json)|*.json"))
+            using (var stream = GetOpenFile(@"json files (*.json)|*.json"))
             {
                 if (stream != null)
                 {
@@ -60,7 +62,7 @@ namespace JSLBracketBuilder
 
         private void SelectBtags_Click(object sender, EventArgs e)
         {
-            using (Stream stream = GetFile(@"txt files (*.txt)|*.txt|All files|*.*", 1))
+            using (Stream stream = GetOpenFile(@"txt files (*.txt)|*.txt|All files|*.*", 1))
             {
                 if (stream != null)
                     ParseBattletags(stream);
@@ -84,17 +86,41 @@ namespace JSLBracketBuilder
 
         private void MakeGroups_Click(object sender, EventArgs e)
         {
-
+            StartWorker(Operation.GENERATE_GROUPS);
         }
 
         private void SaveGroups_Click(object sender, EventArgs e)
         {
-
+            if (Groups != null)
+            {
+                using (Stream stream = GetSaveFile(@"txt files (*.txt)|*.txt|All files|*.*", 1))
+                {
+                    if (stream != null)
+                    {
+                        using (var sw = new StreamWriter(stream))
+                        {
+                            sw.Write(JsonConvert.SerializeObject(Groups));
+                        }
+                    }
+                }
+            }
         }
 
         private void SaveData_Click(object sender, EventArgs e)
         {
-
+            if (Players != null)
+            {
+                using (Stream stream = GetSaveFile(@"player files (*.player)|*.player", 1))
+                {
+                    if (stream != null)
+                    {
+                        using (var sw = new StreamWriter(stream))
+                        {
+                            sw.Write(JsonConvert.SerializeObject(Players));
+                        }
+                    }
+                }
+            }
         }
 
         private void SwitchRegion_Click(object sender, EventArgs e)
@@ -111,6 +137,7 @@ namespace JSLBracketBuilder
 
         private void StartWorker(Operation operation)
         {
+            API.SetRegion(Region);
             Operation = operation;
             switch (Operation)
             {
@@ -125,18 +152,6 @@ namespace JSLBracketBuilder
                     break;
                 case Operation.GENERATE_GROUPS:
                     label_state.Text = @"Generating groups";
-                    break;
-                case Operation.SAVE_GROUPS:
-                    label_state.Text = @"Saving groups to disk";
-                    break;
-                case Operation.SAVE_DATA:
-                    label_state.Text = @"Saving data to disk";
-                    break;
-                case Operation.LOAD_DATA:
-                    label_state.Text = @"Loading existing data";
-                    break;
-                case Operation.LOAD_BTAGS:
-                    label_state.Text = @"Loading Battletags";
                     break;
             }
             progressBar1.Style = ProgressBarStyle.Marquee;
@@ -160,18 +175,6 @@ namespace JSLBracketBuilder
                 case Operation.GENERATE_GROUPS:
                     GenerateGroups();
                     break;
-                case Operation.SAVE_GROUPS:
-                    SaveGroupsToDisk();
-                    break;
-                case Operation.SAVE_DATA:
-                    SaveDataToDisk();
-                    break;
-                case Operation.LOAD_DATA:
-                    LoadData();
-                    break;
-                case Operation.LOAD_BTAGS:
-                    LoadBattletags();
-                    break;
             }
 
             var seasonID = API.GetCurrentSeasonID();
@@ -192,39 +195,37 @@ namespace JSLBracketBuilder
 
         private void GetJSLPlayersInAllLadders()
         {
+            if (Ladders == null) return;
 
+            if (Players == null) Players = new List<Player>();
+
+            Players.AddRange((from l in Ladders
+                              from p in API.GetAllPlayersInLadder(l)
+                              where Battletags.Contains(p.Battletag)
+                              select p));
         }
 
         private void GenerateGroups()
         {
+            if (Players == null) return;
 
-        }
+            char id = 'A';
+            for (var i = 0; i < NumGroups; i++) Groups.Add(new Group(id++));
 
-        private void SaveGroupsToDisk()
-        {
-
-        }
-
-        private void SaveDataToDisk()
-        {
-
-        }
-
-        private void LoadData()
-        {
-
-        }
-
-        private void LoadBattletags()
-        {
-            
+            var groupNum = 0;
+            foreach (var player in Players)
+            {
+                Groups[groupNum].Members.Add(player);
+                if (groupNum == NumGroups - 1) groupNum = 0;
+                else groupNum++;
+            }
         }
 
         #endregion
 
         #region Utilities
 
-        private Stream GetFile(string filter, int filterIndex = 1)
+        private Stream GetOpenFile(string filter, int filterIndex = 1)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -234,6 +235,20 @@ namespace JSLBracketBuilder
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
                 return openFileDialog.OpenFile();
+
+            return null;
+        }
+
+        private Stream GetSaveFile(string filter, int filterIndex = 1)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = filter,
+                FilterIndex = filterIndex
+            };
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                return saveFileDialog.OpenFile();
 
             return null;
         }

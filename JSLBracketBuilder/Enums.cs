@@ -31,9 +31,5 @@
         GET_ALL_LADDERS,
         GET_PLAYERS_IN_LADDER,
         GENERATE_GROUPS,
-        SAVE_GROUPS,
-        SAVE_DATA,
-        LOAD_DATA,
-        LOAD_BTAGS
     }
 }
