@@ -116,28 +116,35 @@ namespace JSLBracketBuilder
 
             foreach (dynamic team in data.team)
             {
-                bnet = team.member[0].character_link.battle_tag;
-                mmr = team.rating;
-                games_played = team.member[0].played_race_count[0].count;
-                race = team.member[0].played_race_count[0].race;
-
-                bnet = bnet.ToLower();
-                
-                var player = (from p in players
-                              where p.Battletag == bnet
-                              select p).FirstOrDefault();
-
-                if (player == null)
+                try
                 {
-                    player = new Player()
+                    bnet = team.member[0].character_link.battle_tag;
+                    mmr = team.rating;
+                    games_played = team.member[0].played_race_count[0].count;
+                    race = team.member[0].played_race_count[0].race;
+
+                    bnet = bnet.ToLower();
+
+                    var player = (from p in players
+                                  where p.Battletag == bnet
+                                  select p).FirstOrDefault();
+
+                    if (player == null)
                     {
-                        Battletag = bnet,
-                        Region = Region
-                    };
-                    players.Add(player);
+                        player = new Player()
+                        {
+                            Battletag = bnet,
+                            Region = Region
+                        };
+                        players.Add(player);
+                    }
+                    var erace = (Race)Enum.Parse(typeof(Race), race, true);
+                    player.AddTeam(erace, ladder.League, ladder.Division, games_played, mmr);
+                } catch
+                {
+                    continue;
                 }
-                var erace = (Race)Enum.Parse(typeof(Race), race, true);
-                player.AddTeam(erace, ladder.League, ladder.Division, games_played, mmr);
+                
             }
 
             return players;

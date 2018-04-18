@@ -13,7 +13,6 @@ namespace JSLBracketBuilder
         private int NumGroups { get; } = 8;
 
         private List<string> Battletags = null;
-        private List<Player> ExistingData = null;
 
         private BackgroundWorker Worker;
         private Operation Operation;
@@ -54,7 +53,7 @@ namespace JSLBracketBuilder
                 {
                     using (var sr = new StreamReader(stream))
                     {
-                        ExistingData = JsonConvert.DeserializeObject<List<Player>>(sr.ReadToEnd());
+                        Players = JsonConvert.DeserializeObject<List<Player>>(sr.ReadToEnd());
                     }
                 }
             }
@@ -71,17 +70,26 @@ namespace JSLBracketBuilder
 
         private void QueryAPI_Click(object sender, EventArgs e)
         {
-            //progressBar1.Style = ProgressBarStyle.Marquee;
-            //Worker.RunWorkerAsync();
-
             // get current season id
-            StartWorker(Operation.GET_SEASON_ID);
+            if (RadioSeason.Checked)
+            {
+                StartWorker(Operation.GET_SEASON_ID);
+                //RadioSeason.Enabled = false;
+            }
 
             // get all ladders bronze-diamond for the current season
-            StartWorker(Operation.GET_ALL_LADDERS);
+            if (RadioLadder.Checked)
+            {
+                StartWorker(Operation.GET_ALL_LADDERS);
+                //RadioLadder.Enabled = false;
+            }
 
             // for each ladder, save the players that are registered
-            StartWorker(Operation.GET_PLAYERS_IN_LADDER);
+            if (RadioPlayers.Checked)
+            {
+                StartWorker(Operation.GET_PLAYERS_IN_LADDER);
+                //RadioPlayers.Enabled = false;
+            }
         }
 
         private void MakeGroups_Click(object sender, EventArgs e)
@@ -110,7 +118,7 @@ namespace JSLBracketBuilder
         {
             if (Players != null)
             {
-                using (Stream stream = GetSaveFile(@"player files (*.player)|*.player", 1))
+                using (Stream stream = GetSaveFile(@"json files (*.json)|*.json", 1))
                 {
                     if (stream != null)
                     {
@@ -155,6 +163,7 @@ namespace JSLBracketBuilder
                     break;
             }
             progressBar1.Style = ProgressBarStyle.Marquee;
+            DisableButtons();
 
             Worker.RunWorkerAsync();
         }
@@ -176,17 +185,13 @@ namespace JSLBracketBuilder
                     GenerateGroups();
                     break;
             }
-
-            var seasonID = API.GetCurrentSeasonID();
-            var ladders = API.GetAllLadders(League.BRONZE, seasonID);
-            var players = API.GetAllPlayersInLadder(ladders[0]);
-            MessageBox.Show(players[0].Battletag);
         }
 
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             progressBar1.Style = ProgressBarStyle.Blocks;
             label_state.Text = @"Awaiting Operation";
+            EnableButtons();
         }
 
         #endregion
@@ -201,7 +206,9 @@ namespace JSLBracketBuilder
 
             Players.AddRange((from l in Ladders
                               from p in API.GetAllPlayersInLadder(l)
+                              //from ep in Players
                               where Battletags.Contains(p.Battletag)
+                              //where ep.Battletag != p.Battletag
                               select p));
         }
 
@@ -255,7 +262,10 @@ namespace JSLBracketBuilder
 
         private List<string> ParseBattletags(Stream filestream)
         {
-            Battletags = new List<string>();
+            if (Battletags == null)
+                Battletags = new List<string>();
+            else
+                Battletags.Clear();
 
             using (var sr = new StreamReader(filestream))
             {
@@ -265,6 +275,34 @@ namespace JSLBracketBuilder
             }
 
             return Battletags;
+        }
+
+        private void DisableButtons()
+        {
+            LoadExisting.Enabled = false;
+            SelectBtags.Enabled = false;
+            QueryAPI.Enabled = false;
+            MakeGroups.Enabled = false;
+            SaveGroups.Enabled = false;
+            SaveData.Enabled = false;
+            SwitchRegion.Enabled = false;
+            RadioSeason.Enabled = false;
+            RadioLadder.Enabled = false;
+            RadioPlayers.Enabled = false;
+        }
+
+        private void EnableButtons()
+        {
+            LoadExisting.Enabled = true;
+            SelectBtags.Enabled = true;
+            QueryAPI.Enabled = true;
+            MakeGroups.Enabled = true;
+            SaveGroups.Enabled = true;
+            SaveData.Enabled = true;
+            SwitchRegion.Enabled = true;
+            RadioSeason.Enabled = true;
+            RadioLadder.Enabled = true;
+            RadioPlayers.Enabled = true;
         }
 
         #endregion

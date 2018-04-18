@@ -49,6 +49,10 @@
             this.SwitchRegion = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
             this.label_region = new System.Windows.Forms.Label();
+            this.RadioSeason = new System.Windows.Forms.RadioButton();
+            this.RadioLadder = new System.Windows.Forms.RadioButton();
+            this.RadioPlayers = new System.Windows.Forms.RadioButton();
+            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -102,7 +106,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(324, 129);
+            this.label5.Location = new System.Drawing.Point(459, 129);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(72, 13);
             this.label5.TabIndex = 5;
@@ -111,7 +115,7 @@
             // label_state
             // 
             this.label_state.AutoSize = true;
-            this.label_state.Location = new System.Drawing.Point(393, 129);
+            this.label_state.Location = new System.Drawing.Point(528, 129);
             this.label_state.Name = "label_state";
             this.label_state.Size = new System.Drawing.Size(96, 13);
             this.label_state.TabIndex = 6;
@@ -167,7 +171,7 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(321, 148);
+            this.progressBar1.Location = new System.Drawing.Point(456, 148);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(222, 23);
             this.progressBar1.TabIndex = 17;
@@ -194,7 +198,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(324, 201);
+            this.label7.Location = new System.Drawing.Point(459, 201);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(95, 13);
             this.label7.TabIndex = 21;
@@ -202,7 +206,7 @@
             // 
             // SaveData
             // 
-            this.SaveData.Location = new System.Drawing.Point(425, 196);
+            this.SaveData.Location = new System.Drawing.Point(560, 196);
             this.SaveData.Name = "SaveData";
             this.SaveData.Size = new System.Drawing.Size(118, 23);
             this.SaveData.TabIndex = 22;
@@ -212,7 +216,7 @@
             // 
             // SwitchRegion
             // 
-            this.SwitchRegion.Location = new System.Drawing.Point(425, 240);
+            this.SwitchRegion.Location = new System.Drawing.Point(560, 240);
             this.SwitchRegion.Name = "SwitchRegion";
             this.SwitchRegion.Size = new System.Drawing.Size(118, 23);
             this.SwitchRegion.TabIndex = 23;
@@ -223,7 +227,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(318, 245);
+            this.label9.Location = new System.Drawing.Point(453, 245);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(84, 13);
             this.label9.TabIndex = 24;
@@ -232,17 +236,62 @@
             // label_region
             // 
             this.label_region.AutoSize = true;
-            this.label_region.Location = new System.Drawing.Point(394, 246);
+            this.label_region.Location = new System.Drawing.Point(529, 246);
             this.label_region.Name = "label_region";
             this.label_region.Size = new System.Drawing.Size(22, 13);
             this.label_region.TabIndex = 25;
             this.label_region.Text = "US";
             // 
+            // RadioSeason
+            // 
+            this.RadioSeason.AutoSize = true;
+            this.RadioSeason.Checked = true;
+            this.RadioSeason.Location = new System.Drawing.Point(303, 149);
+            this.RadioSeason.Name = "RadioSeason";
+            this.RadioSeason.Size = new System.Drawing.Size(121, 17);
+            this.RadioSeason.TabIndex = 26;
+            this.RadioSeason.TabStop = true;
+            this.RadioSeason.Text = "Get Season Number";
+            this.RadioSeason.UseVisualStyleBackColor = true;
+            // 
+            // RadioLadder
+            // 
+            this.RadioLadder.AutoSize = true;
+            this.RadioLadder.Location = new System.Drawing.Point(303, 172);
+            this.RadioLadder.Name = "RadioLadder";
+            this.RadioLadder.Size = new System.Drawing.Size(83, 17);
+            this.RadioLadder.TabIndex = 27;
+            this.RadioLadder.Text = "Get Ladders";
+            this.RadioLadder.UseVisualStyleBackColor = true;
+            // 
+            // RadioPlayers
+            // 
+            this.RadioPlayers.AutoSize = true;
+            this.RadioPlayers.Location = new System.Drawing.Point(303, 195);
+            this.RadioPlayers.Name = "RadioPlayers";
+            this.RadioPlayers.Size = new System.Drawing.Size(79, 17);
+            this.RadioPlayers.TabIndex = 28;
+            this.RadioPlayers.Text = "Get Players";
+            this.RadioPlayers.UseVisualStyleBackColor = true;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(300, 129);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(54, 13);
+            this.label10.TabIndex = 29;
+            this.label10.Text = "API Mode";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(562, 277);
+            this.ClientSize = new System.Drawing.Size(761, 277);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.RadioPlayers);
+            this.Controls.Add(this.RadioLadder);
+            this.Controls.Add(this.RadioSeason);
             this.Controls.Add(this.label_region);
             this.Controls.Add(this.SwitchRegion);
             this.Controls.Add(this.SaveData);
@@ -296,5 +345,9 @@
         private System.Windows.Forms.Button SwitchRegion;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label_region;
+        private System.Windows.Forms.RadioButton RadioSeason;
+        private System.Windows.Forms.RadioButton RadioLadder;
+        private System.Windows.Forms.RadioButton RadioPlayers;
+        private System.Windows.Forms.Label label10;
     }
 }
